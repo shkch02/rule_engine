@@ -1,4 +1,4 @@
-module rule-engine
+module rule_engine
 
 go 1.21
 
