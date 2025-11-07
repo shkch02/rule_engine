@@ -1,3 +1,5 @@
+// go run ./cmd/engine/main.go test_logs.txt
+
 package main
 
 import (
@@ -11,6 +13,21 @@ import (
 	"rule_engine/pkg/engine"
 	"rule_engine/pkg/models"
 )
+
+func init() {
+	fmt.Println()
+	fmt.Println(`  _____       _        ______             _            `)
+	fmt.Println(` |  __ \     | |      |  ____|           (_)           `)
+	fmt.Println(` | |__) |   _| | ___  | |__   _ __   __ _ _ _ __   ___ `)
+	fmt.Println(` |  _  / | | | |/ _ \ |  __| | '_ \ / _' | | '_ \ / _ \`)
+	fmt.Println(` | | \ \ |_| | |  __/ | |____| | | | (_| | | | | |  __/`)
+	fmt.Println(` |_|  \_\__,_|_|\___| |______|_| |_|\__, |_|_| |_|\___|`)
+	fmt.Println(`                                     __/ |             `)
+	fmt.Println(`                                    |___/              `)
+	fmt.Println()
+	fmt.Println(" [ Rule Engine running... ]")
+	fmt.Println()
+}
 
 const (
 	// PoC를 위해 룰셋 파일 경로를 하드코딩합니다.
