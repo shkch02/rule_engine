@@ -1,0 +1,63 @@
+# 룰셋 메타 정보 (선택 사항)
+ruleset_version: "1.0.0"
+description: "eBPF System Call based Security Violation Detection Rules"
+
+# 룰 엔진이 로드할 개별 룰 목록
+rules:
+  # -------------------------------------------------------------------------
+  # Rule-A: 호스트 시스템 민감 파일 쓰기 접근 감지
+  # -------------------------------------------------------------------------
+  - rule_id: "RULE_A01_HOST_CRITICAL_WRITE"
+    description: "Detection of write access to critical host files (/etc/passwd, /etc/shadow, /etc/hosts)"
+    conditions:
+      # openat 시스템콜에 한정
+      - field: "syscall_name"
+        operator: "equals"
+        value: ["openat"]
+        
+      # 쓰기 권한 플래그 (O_WRONLY, O_RDWR) 포함 여부 확인
+      - field: "flags"
+        operator: "contains_any"
+        value: ["O_WRONLY", "O_RDWR"] # Go 엔진에서 실제 정수값(1, 2)으로 변환하여 비트 연산 필요
+        
+      # 특정 민감 경로에 대한 접근
+      - field: "file_path"
+        operator: "starts_with_any"
+        value: ["/etc/passwd", "/etc/shadow", "/etc/hosts"]
+
+  # -------------------------------------------------------------------------
+  # Rule-B: 호스트 프로비저닝/인증 파일 읽기 감지
+  # -------------------------------------------------------------------------
+  - rule_id: "RULE_B02_HOST_AUTH_READ"
+    description: "Detection of read access to host authentication files (.ssh/id_rsa, .kube/config)"
+    conditions:
+      # openat 시스템콜에 한정
+      - field: "syscall_name"
+        operator: "equals"
+        value: ["openat"]
+        
+      # 순수 읽기 접근 (쓰기 플래그가 없는 경우)
+      - field: "flags"
+        operator: "not_contains_any"
+        value: ["O_WRONLY", "O_RDWR"] # 쓰기 플래그가 없어야 함
+        
+      # 특정 인증 파일 이름으로 끝나는지 확인
+      - field: "file_path"
+        operator: "ends_with_any"
+        value: ["/id_rsa", "/known_hosts", "/.ssh/config", "/.kube/config"]
+        
+  # -------------------------------------------------------------------------
+  # Rule-C: 컨테이너 탈출 경로 접근 감지
+  # -------------------------------------------------------------------------
+  - rule_id: "RULE_C03_CONTAINER_ESCAPE_PATH"
+    description: "Detection of access attempts to common container escape paths (/proc/sys, /sys/kernel)"
+    conditions:
+      # openat 시스템콜에 한정
+      - field: "syscall_name"
+        operator: "equals"
+        value: ["openat"]
+        
+      # 호스트의 proc/sys나 커널 관련 파일 접근 시도
+      - field: "file_path"
+        operator: "starts_with_any"
+        value: ["/proc/sys/kernel/", "/sys/kernel/"]

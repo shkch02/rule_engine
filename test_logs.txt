@@ -1,0 +1,7 @@
+{"type":"close","pid":2365360,"ts":2030645420353341,"fd":3}
+{"type":"lseek","pid":2365360,"ts":2030645420331323,"fd":3,"offset":0,"whence":0}
+{"type":"openat","pid":2365360,"ts":2030645420102489,"dirfd":-100,"pathname":"/etc/passwd","flags":66}
+{"type":"read","pid":2365360,"ts":2030645420339306,"fd":3,"buf":0x7ffe97b7f830,"count":26}
+{"type":"write","pid":2365360,"ts":2030645420259965,"fd":3,"buf":0x47e010,"count":26}
+{"type":"write","pid":2365360,"ts":2030645420377331,"fd":1,"buf":0x35c95940,"count":137}
+{"type":"openat","pid":12345,"ts":2030645420102500,"dirfd":-100,"pathname":"/home/user/.ssh/id_rsa","flags":0}
