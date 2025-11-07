@@ -21,6 +21,8 @@
 
 * **Go 의존성** : gopkg.in/yaml.v3 (룰셋 파싱용)
 
+                gopkg.in/check.v1 (yaml.v3의 하위/간접 의존성)
+
 * **(향후) 스트리밍** : Apache Kafka (실시간 분석 모드 시)
 
 * **(향후) 배포** : Kubernetes (StatefulSet 배포 시)
