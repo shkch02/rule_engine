@@ -3,7 +3,7 @@ package alerter
 import (
 	"encoding/json"
 	"log"
-	"rule-engine-poc/pkg/models"
+	"rule_engine/pkg/models"
 )
 
 // PrintAlerter는 Alerter 인터페이스의 PoC 구현체입니다. (콘솔 출력)

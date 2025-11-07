@@ -2,7 +2,7 @@ package alerter
 
 import (
 	"log"
-	"rule-engine-poc/pkg/models"
+	"rule_engine/pkg/models"
 )
 
 // SlackAlerter는 향후 구현될 Slack 알림 모듈입니다.

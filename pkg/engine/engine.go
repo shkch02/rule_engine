@@ -1,8 +1,8 @@
 package engine
 
 import (
-	"rule-engine-poc/pkg/config"
-	"rule-engine-poc/pkg/models"
+	"rule_engine/pkg/config"
+	"rule_engine/pkg/models"
 )
 
 // RuleEngine은 로드된 룰셋과 평가기를 보유합니다.

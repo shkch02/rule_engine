@@ -2,8 +2,8 @@ package engine
 
 import (
 	"log"
-	"rule-engine-poc/pkg/config"
-	"rule-engine-poc/pkg/models"
+	"rule_engine/pkg/config"
+	"rule_engine/pkg/models"
 	"strings"
 )
 
