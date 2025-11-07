@@ -3,7 +3,7 @@ package input
 import (
 	"context"
 	"fmt"
-	"rule-engine-poc/pkg/models"
+	"rule_engine/pkg/models"
 )
 
 // KafkaSource는 향후 구현될 Kafka Consumer입니다.

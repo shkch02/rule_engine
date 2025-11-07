@@ -78,11 +78,13 @@ func main() {
 
 		// 6. 동적 JSON 파싱 (핵심)
 		// SyscallEvent 구조체 대신 map[string]interface{} 사용
+		//ToDO : 여기 지금 0x주소값 구조체 파싱 실패중, 넘길떄 0x땔지 여기서 처리할지 고민중
 		var event models.Event
 		if err := json.Unmarshal(line, &event); err != nil {
 			log.Printf("경고: 로그 파싱 실패 (라인 %d): %v", lineNum, err)
 			continue
 		}
+		log.Printf("디버그: 이벤트 객체 (라인 %d): %+v", lineNum, event)
 
 		// 7. 룰 엔진에 이벤트 전달 및 평가
 		violations := ruleEngine.Evaluate(event)
