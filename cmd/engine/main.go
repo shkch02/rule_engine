@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"rule-engine-poc/pkg/alerter"
-	"rule-engine-poc/pkg/config"
-	"rule-engine-poc/pkg/engine"
-	"rule-engine-poc/pkg/models"
+	"rule_engine/pkg/alerter"
+	"rule_engine/pkg/config"
+	"rule_engine/pkg/engine"
+	"rule_engine/pkg/models"
 )
 
 const (

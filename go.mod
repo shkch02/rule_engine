@@ -1,4 +1,4 @@
-module rule-engine-poc
+module rule-engine
 
 go 1.21
 

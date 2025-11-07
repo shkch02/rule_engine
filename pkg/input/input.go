@@ -2,7 +2,7 @@ package input
 
 import (
 	"context"
-	"rule-engine-poc/pkg/models"
+	"rule_engine/pkg/models"
 )
 
 // Source는 모든 이벤트 입력 소스(Kafka, File 등)가 구현할 인터페이스입니다.
