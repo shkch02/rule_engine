@@ -19,7 +19,7 @@ func NewRuleEngine(ruleset *config.RulesetConfig) *RuleEngine {
 	}
 }
 
-// Evaluate는 단일 이벤트를 모든 룰과 비교하여 위반 목록을 반환합니다.
+// Evaluate는 map[key:value ...]구조체인 event를 인자로 받아 단일 이벤트를 모든 룰과 비교하여 위반 목록을 반환합니다.
 func (e *RuleEngine) Evaluate(event models.Event) []models.Violation {
 	var violations []models.Violation
 
