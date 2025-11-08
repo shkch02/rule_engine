@@ -37,8 +37,6 @@ const (
 )
 
 func main() {
-	log.Println("룰 엔진 PoC 시작...")
-
 	// 1. 커맨드 라인 인자로부터 로그 파일 경로 획득
 	if len(os.Args) < 2 {
 		fmt.Fprintf(os.Stderr, "사용법: %s <log_file_path>\n", os.Args[0])
