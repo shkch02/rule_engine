@@ -32,7 +32,7 @@ func (ks *KafkaSource) Stream(ctx context.Context) (<-chan models.Event, error) 
 
 		for {
 			//1. 컨텍스트 취소 확인
-			if ctx.err() != nil {
+			if ctx.Err() != nil {
 				return
 			}
 
@@ -40,7 +40,7 @@ func (ks *KafkaSource) Stream(ctx context.Context) (<-chan models.Event, error) 
 			m, err := ks.reader.FetchMessage(ctx)
 			if err != nil {
 				if ctx.Err() == nil {
-					log.printf("카프카 메시지 읽기 오류 : %v", err)
+					log.Printf("카프카 메시지 읽기 오류 : %v", err)
 				}
 				return
 			}
