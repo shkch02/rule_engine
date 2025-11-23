@@ -61,8 +61,8 @@ pipeline {
                         echo "Deploying pod with image"
                         sh "KUBECONFIG=${KUBE_CONFIG_FILE} kubectl apply -f ${DEPLOYMENT_YAML}"
                         sh "KUBECONFIG=${KUBE_CONFIG_FILE} kubectl rollout status deployment/rule-engine -n default"
-                        sh "kill ${tunnelPid} || true" 
-                        sh "rm -f tunnel.pid || true"                
+                        sh "kill ${tunnelPid} " 
+                        sh "rm -f tunnel.pid"                
                         }
                     }
                 }
