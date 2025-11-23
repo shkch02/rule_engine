@@ -52,7 +52,7 @@ pipeline {
                     def FULL_IMAGE_PATH = "${env.HARBOR_URL}/${env.HARBOR_PROJECT}/${env.IMAGE_NAME}:latest"
                     // ssh 터널 시작
                     sshagent (['k8s-master-ssh-key']){
-                        sh "nohup ssh -o StrictHostKeyChecking=no -N -L ${localPort}:${env.K8S_TARGET_IP}:${env.K8S_PORT} ${env.K8S_USER}@${env.SSH_HOST} > /dev/null 2>&1 & echo \$! > tunnel.pid"
+                        sh "nohup ssh -o StrictHostKeyChecking=no -N -L ${localport}:${env.K8S_TARGET_IP}:${env.K8S_PORT} ${env.K8S_USER}@${env.SSH_HOST} > /dev/null 2>&1 & echo \$! > tunnel.pid"
                         tunnelPid = readFile('tunnel.pid').trim()
                         sleep 10
 
