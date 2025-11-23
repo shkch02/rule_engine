@@ -57,7 +57,7 @@ pipeline {
                         sleep 10
 
                     withCredentials([file(credentialsId: KUBE_CREDS_ID, variable : 'KUBE_CONFIG_FILE')]){
-                        sh "sed -i 's|server: .*|server: https://127.0.0.1:${localPort}|' $KUBE_CONFIG_FILE"
+                        sh "sed -i 's|server: .*|server: https://127.0.0.1:${localport}|' $KUBE_CONFIG_FILE"
                         sh "sed -i 's|image:.*${env.IMAGE_NAME}:latest|image: ${env.HARBOR_URL}/${env.HARBOR_PROJECT}/${env.IMAGE_NAME}:latest|g' ${DEPLOYMENT_YAML}"
                         echo "Deploying pod with image tag: ${env.IMAGE_TAG}"
                         sh "KUBECONFIG=${KUBE_CONFIG_FILE} kubectl apply -f ${DEPLOYMENT_YAML}"
