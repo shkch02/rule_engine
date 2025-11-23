@@ -61,7 +61,7 @@ pipeline {
                         sh "sed -i 's|image:.*${env.IMAGE_NAME}:latest|image: ${env.HARBOR_URL}/${env.HARBOR_PROJECT}/${env.IMAGE_NAME}:latest|g' ${DEPLOYMENT_YAML}"
                         echo "Deploying pod with image tag: ${env.IMAGE_TAG}"
                         sh "KUBECONFIG=${KUBE_CONFIG_FILE} kubectl apply -f ${DEPLOYMENT_YAML}"
-                        sh "KUBECONFIG=${KUBE_CONFIG_FILE} kubectl rollout status deployment/rule-engine --timeout=120s"
+                        sh "KUBECONFIG=${KUBE_CONFIG_FILE} kubectl rollout status deployment/rule-engine -n default"
                         sh "kill ${tunnelPid} || true" 
                         sh "rm -f tunnel.pid || true"                
                         }
