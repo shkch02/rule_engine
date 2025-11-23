@@ -18,7 +18,7 @@ spec:
       serviceAccountName: admin-server-sa
       containers:
       - name: rule-engine-container
-        image: "shkch.dunckdns.org/rule_engine/rule-engine:latest"
+        image: "shkch.duckdns.org/rule_engine/rule-engine:latest"
         volumeMounts:
         - name: rule-volume
           mountPath: /etc/rules # 룰 엔진 컨테이너 내부에서 YAML 파일을 읽을 경로
