@@ -13,4 +13,4 @@ FROM alpine:latest
 
 COPY --from=builder /app/rule-engine /usr/local/bin/rule-engine
 
-ENTRYPOINT ["rule-engine"]
+ENTRYPOINT ["rule-engine ./test_log.txt"]
