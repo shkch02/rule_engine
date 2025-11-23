@@ -68,7 +68,7 @@ func main() {
 		log.Fatalf("카프카 소스 스트림 생성 실패: %v", err)
 	}
 
-	log.Println("이벤트 스트리밍 시작...")
+	log.Println("이벤트 스트리밍 시작....")
 
 	for event := range eventCh {
 		violations := ruleEngine.Evaluate(event)
