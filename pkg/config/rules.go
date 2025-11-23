@@ -35,7 +35,7 @@ func LoadRules(path string) (*RulesetConfig, error) {
 		return nil, err
 	}
 
-	var config RulesetConfig
+	var config RulesetConfig //위에서 정의한 struct
 	if err = yaml.Unmarshal(data, &config); err != nil {
 		return nil, err
 	}
