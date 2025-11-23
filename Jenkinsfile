@@ -41,29 +41,30 @@ pipeline {
             }
         }
         
-    }
+    
 
-    stage('Deploy to kubernetes') {
-        steps {
-            script{
-                def localport = 8888
-                def KUBECONFIG_PATH
-                def tunnelPid
-                def FULL_IMAGE_PATH = "${env.HARBOR_URL}/${env.HARBOR_PROJECT}/${env.IMAGE_NAME}:latest"
-                // ssh 터널 시작
-                sshagent (['k8s-master-ssh-key']){
-                    sh "nohup ssh -o StrictHostKeyChecking=no -N -L ${localPort}:${env.K8S_TARGET_IP}:${env.K8S_PORT} ${env.K8S_USER}@${env.SSH_HOST} > /dev/null 2>&1 & echo \$! > tunnel.pid"
-                    tunnelPid = readFile('tunnel.pid').trim()
-                    sleep 10
+        stage('Deploy to kubernetes') {
+            steps {
+                script{
+                    def localport = 8888
+                    def KUBECONFIG_PATH
+                    def tunnelPid
+                    def FULL_IMAGE_PATH = "${env.HARBOR_URL}/${env.HARBOR_PROJECT}/${env.IMAGE_NAME}:latest"
+                    // ssh 터널 시작
+                    sshagent (['k8s-master-ssh-key']){
+                        sh "nohup ssh -o StrictHostKeyChecking=no -N -L ${localPort}:${env.K8S_TARGET_IP}:${env.K8S_PORT} ${env.K8S_USER}@${env.SSH_HOST} > /dev/null 2>&1 & echo \$! > tunnel.pid"
+                        tunnelPid = readFile('tunnel.pid').trim()
+                        sleep 10
 
-                withCredentials([file(credentialsId: KUBE_CREDS_ID, variable : 'KUBE_CONFIG_FILE')]){
-                    sh "sed -i 's|server: .*|server: https://127.0.0.1:${localPort}|' $KUBE_CONFIG_FILE"
-                    sh "sed -i 's|image:.*${env.IMAGE_NAME}:latest|image: ${env.HARBOR_URL}/${env.HARBOR_PROJECT}/${env.IMAGE_NAME}:latest|g' ${DEPLOYMENT_YAML}"
-                    echo "Deploying pod with image tag: ${env.IMAGE_TAG}"
-                    sh "KUBECONFIG=${KUBE_CONFIG_FILE} kubectl apply -f ${DEPLOYMENT_YAML}"
-                    sh "KUBECONFIG=${KUBE_CONFIG_FILE} kubectl rollout status deployment/rule-engine-deployment --timeout=120s"
-                    sh "kill ${tunnelPid} || true" 
-                    sh "rm -f tunnel.pid || true"                
+                    withCredentials([file(credentialsId: KUBE_CREDS_ID, variable : 'KUBE_CONFIG_FILE')]){
+                        sh "sed -i 's|server: .*|server: https://127.0.0.1:${localPort}|' $KUBE_CONFIG_FILE"
+                        sh "sed -i 's|image:.*${env.IMAGE_NAME}:latest|image: ${env.HARBOR_URL}/${env.HARBOR_PROJECT}/${env.IMAGE_NAME}:latest|g' ${DEPLOYMENT_YAML}"
+                        echo "Deploying pod with image tag: ${env.IMAGE_TAG}"
+                        sh "KUBECONFIG=${KUBE_CONFIG_FILE} kubectl apply -f ${DEPLOYMENT_YAML}"
+                        sh "KUBECONFIG=${KUBE_CONFIG_FILE} kubectl rollout status deployment/rule-engine-deployment --timeout=120s"
+                        sh "kill ${tunnelPid} || true" 
+                        sh "rm -f tunnel.pid || true"                
+                        }
                     }
                 }
             }
@@ -75,5 +76,4 @@ pipeline {
            sh "docker logout ${env.HARBOR_URL}"
         }
     }
-
 }
