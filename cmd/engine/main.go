@@ -31,20 +31,18 @@ func init() {
 }
 
 const (
-	// PoC를 위해 룰셋 파일 경로를 하드코딩합니다.
-	// K8s 배포 시 ConfigMap을 통해 이 경로에 마운트할 수 있습니다.
-	defaultRulesetPath = "ruleset_config.yaml"
+	defaultRulesetPath = "/etc/rules/rule.yaml" // 룰셋 파일 경로, 배포 야믈에서 연결 해줘야함
 )
 
 func main() {
-	// 1. 커맨드 라인 인자로부터 로그 파일 경로 획득
+	// 로그 텍스트 인자로 받음
 	if len(os.Args) < 2 {
 		fmt.Fprintf(os.Stderr, "사용법: %s <log_file_path>\n", os.Args[0])
 		os.Exit(1)
 	}
 	logFilePath := os.Args[1]
 
-	// 2. 룰셋 로드
+	// 2. 룰셋에서 룰 야믈 입력받아 야믈에 맞는 구조체로 파싱
 	ruleset, err := config.LoadRules(defaultRulesetPath)
 	if err != nil {
 		log.Fatalf("룰셋 파일 로드 실패 (%s): %v", defaultRulesetPath, err)
@@ -67,7 +65,7 @@ func main() {
 	lineNum := 0
 	log.Printf("로그 파일 스캔 시작: %s", logFilePath)
 
-	for scanner.Scan() {
+	for scanner.Scan() { // .Scan : \n단위로 스캔
 		lineNum++
 		line := scanner.Bytes()
 
@@ -75,10 +73,8 @@ func main() {
 			continue
 		}
 
-		// 6. 동적 JSON 파싱 (핵심)
-		// SyscallEvent 구조체 대신 map[string]interface{} 사용
-		// event : map[인자이름 : 인자값 인자이름 : 인자값 ...]
-		//ToDO : 여기 지금 0x주소값 구조체 파싱 실패중, 넘길떄 0x땔지 여기서 처리할지 고민중
+		// 로그 라인 단위 파싱
+		// event : map[인자이름 : 인자값 인자이름 : 인자값 ...]으로 로그 저장
 		var event models.Event
 		if err := json.Unmarshal(line, &event); err != nil {
 			log.Printf("경고: 로그 파싱 실패 (라인 %d): %v", lineNum, err)
