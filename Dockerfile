@@ -9,7 +9,7 @@ COPY . .
 
 RUN CGO_ENABLE=0 go build -o rule-engine ./cmd/engine/
 
-FROM alpine:latest\
+FROM alpine:latest
 
 
 COPY --from=builder /app/rule-engine /usr/local/bin/rule-engine
