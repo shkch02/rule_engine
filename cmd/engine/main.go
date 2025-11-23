@@ -59,6 +59,7 @@ func main() {
 	if topic == "" {
 		log.Fatalf("KAFKA_TOPIC 환경 변수가 설정되지 않았습니다.")
 	}
+
 	groupID := "rule-engine-group" //카프카 컨슈머 그룹 아이디
 
 	kafkaSource := input.NewKafkaSource(brokers, topic, groupID)
@@ -71,7 +72,7 @@ func main() {
 
 	for event := range eventCh {
 		violations := ruleEngine.Evaluate(event)
-
+		fmt.Println(event)
 		if len(violations) > 0 {
 			for _, v := range violations {
 				pocAlerter.Alert(v)
