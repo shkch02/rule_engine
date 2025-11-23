@@ -1,32 +1,37 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: rule-engine
-  namespace: default
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: rule-engine
-  template:
-    metadata:
-      labels:
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: rule-engine
+    namespace: default
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
         app: rule-engine
-    spec:
-      imagePullSecrets:
-      - name: harbor-creds
-      serviceAccountName: admin-server-sa
-      containers:
-      - name: rule-engine-container
-        image: "shkch.duckdns.org/rule_engine/rule-engine:latest"
-        volumeMounts:
+    template:
+      metadata:
+        labels:
+          app: rule-engine
+      spec:
+        imagePullSecrets:
+        - name: harbor-creds
+        serviceAccountName: admin-server-sa
+        containers:
+        - name: rule-engine-container
+          image: "shkch.duckdns.org/rule_engine/rule-engine:latest"
+          env:
+            - name: KAFKA_BROKERS
+              value: "my-cluster-kafka-bootstrap.kafka.svc:9092"
+            - name: KAFKA_TOPIC
+              value: "syscall_events"
+          volumeMounts:
+          - name: rule-volume
+            mountPath: /etc/rules # 룰 엔진 컨테이너 내부에서 YAML 파일을 읽을 경로
+            readOnly: true
+        volumes:
         - name: rule-volume
-          mountPath: /etc/rules # 룰 엔진 컨테이너 내부에서 YAML 파일을 읽을 경로
-          readOnly: true
-      volumes:
-      - name: rule-volume
-        configMap:
-          name: rule-policy-config
-          items:
-          - key: rule.yaml
-            path: rule.yaml
+          configMap:
+            name: rule-policy-config
+            items:
+            - key: rule.yaml
+              path: rule.yaml

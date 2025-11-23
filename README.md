@@ -25,6 +25,8 @@
 
                 go mod download {의존성 패키지}
 
+                "github.com/segmentio/kafka-go" (카프카 라이브러리)
+
 * **(향후) 스트리밍** : Apache Kafka (실시간 분석 모드 시)
 
 * **(향후) 배포** : Kubernetes (StatefulSet 배포 시)

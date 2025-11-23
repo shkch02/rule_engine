@@ -3,15 +3,15 @@
 package main
 
 import (
-	"bufio"
-	"encoding/json"
+	"context"
 	"fmt"
 	"log"
 	"os"
 	"rule_engine/pkg/alerter"
 	"rule_engine/pkg/config"
 	"rule_engine/pkg/engine"
-	"rule_engine/pkg/models"
+	"rule_engine/pkg/input"
+	"strings"
 )
 
 func init() {
@@ -35,67 +35,47 @@ const (
 )
 
 func main() {
-	// 로그 텍스트 인자로 받음
-	if len(os.Args) < 2 {
-		fmt.Fprintf(os.Stderr, "사용법: %s <log_file_path>\n", os.Args[0])
-		os.Exit(1)
-	}
-	logFilePath := os.Args[1]
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
-	// 2. 룰셋에서 룰 야믈 입력받아 야믈에 맞는 구조체로 파싱
+	// 1. 룰셋에서 룰 야믈 입력받아 야믈에 맞는 구조체로 파싱
 	ruleset, err := config.LoadRules(defaultRulesetPath)
 	if err != nil {
 		log.Fatalf("룰셋 파일 로드 실패 (%s): %v", defaultRulesetPath, err)
 	}
 	log.Printf("룰셋 로드 완료: %d개 룰", len(ruleset.Rules))
 
-	// 3. 룰 엔진 및 Alerter 초기화 (PoC용 PrintAlerter 사용)
+	// 2. 룰 엔진 및 Alerter 초기화 (PoC용 PrintAlerter 사용)
 	ruleEngine := engine.NewRuleEngine(ruleset)
 	pocAlerter := alerter.NewPrintAlerter()
 
-	// 4. 로그 파일 열기
-	file, err := os.Open(logFilePath)
-	if err != nil {
-		log.Fatalf("로그 파일 열기 실패 (%s): %v", logFilePath, err)
+	brokerStr := os.Getenv("KAFKA_BROKERS")
+	if brokerStr == "" {
+		log.Fatalf("KAFKA_BROKERS 환경 변수가 설정되지 않았습니다.")
 	}
-	defer file.Close()
+	brokers := strings.Split(brokerStr, ",")
 
-	// 5. 파일 스캔 및 이벤트 처리
-	scanner := bufio.NewScanner(file)
-	lineNum := 0
-	log.Printf("로그 파일 스캔 시작: %s", logFilePath)
+	topic := os.Getenv("KAFKA_TOPIC")
+	if topic == "" {
+		log.Fatalf("KAFKA_TOPIC 환경 변수가 설정되지 않았습니다.")
+	}
+	groupID := "rule-engine-group" //카프카 컨슈머 그룹 아이디
 
-	for scanner.Scan() { // .Scan : \n단위로 스캔
-		lineNum++
-		line := scanner.Bytes()
+	kafkaSource := input.NewKafkaSource(brokers, topic, groupID)
+	eventCh, err := kafkaSource.Stream(ctx)
+	if err != nil {
+		log.Fatalf("카프카 소스 스트림 생성 실패: %v", err)
+	}
 
-		if len(line) == 0 {
-			continue
-		}
+	log.Println("이벤트 스트리밍 시작...")
 
-		// 로그 라인 단위 파싱
-		// event : map[인자이름 : 인자값 인자이름 : 인자값 ...]으로 로그 저장
-		var event models.Event
-		if err := json.Unmarshal(line, &event); err != nil {
-			log.Printf("경고: 로그 파싱 실패 (라인 %d): %v", lineNum, err)
-			continue
-		}
-		//log.Printf("디버그: 이벤트 객체 (라인 %d): %+v", lineNum, event)
-
-		// 7. 룰 엔진에 이벤트 전달 및 평가
+	for event := range eventCh {
 		violations := ruleEngine.Evaluate(event)
 
-		// 8. 위반 사항 알림 (PrintAlerter가 콘솔에 출력)
 		if len(violations) > 0 {
 			for _, v := range violations {
 				pocAlerter.Alert(v)
 			}
 		}
 	}
-
-	if err := scanner.Err(); err != nil {
-		log.Printf("로그 파일 스캔 중 에러: %v", err)
-	}
-
-	log.Println("룰 엔진 PoC 종료.")
 }
