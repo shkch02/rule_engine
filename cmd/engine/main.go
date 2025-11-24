@@ -37,34 +37,31 @@ const (
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-
-	// 1. 룰셋에서 룰 야믈 입력받아 야믈에 맞는 구조체로 파싱
-	ruleset, err := config.LoadRules(defaultRulesetPath)
-	if err != nil {
-		log.Fatalf("룰셋 파일 로드 실패 (%s): %v", defaultRulesetPath, err)
-	}
-	log.Printf("룰셋 로드 완료: %d개", len(ruleset.Rules))
-	for _, rule := range ruleset.Rules {
-		log.Printf(" - 룰 ID: %s, 설명: %s", rule.RuleID, rule.Description)
-	}
-
-	// 2. 룰 엔진 및 Alerter 초기화 (PoC용 PrintAlerter 사용)
-	ruleEngine := engine.NewRuleEngine(ruleset)
-	pocAlerter := alerter.NewPrintAlerter()
-
 	brokerStr := os.Getenv("KAFKA_BROKERS")
 	if brokerStr == "" {
 		log.Fatalf("KAFKA_BROKERS 환경 변수가 설정되지 않았습니다.")
 	}
 	brokers := strings.Split(brokerStr, ",")
-
 	topic := os.Getenv("KAFKA_TOPIC")
 	if topic == "" {
 		log.Fatalf("KAFKA_TOPIC 환경 변수가 설정되지 않았습니다.")
 	}
-
 	groupID := "rule-engine-group" //카프카 컨슈머 그룹 아이디
 
+	//시작
+	//
+	// 1. 룰셋에서 룰 야믈 입력받아 야믈에 맞는 구조체로 파싱
+	ruleset, err := config.LoadRules(defaultRulesetPath)
+	if err != nil {
+		log.Fatalf("룰셋 파일 로드 실패 (%s): %v", defaultRulesetPath, err)
+	}
+	log.Printf("룰셋 로드 완료: %d개 룰", len(ruleset.Rules))
+
+	// 2. 룰 엔진 및 Alerter 초기화 (PoC용 PrintAlerter 사용)
+	ruleEngine := engine.NewRuleEngine(ruleset)
+	pocAlerter := alerter.NewPrintAlerter()
+
+	// 3. 카프카 소스에서 이벤트 스트림 수신
 	kafkaSource := input.NewKafkaSource(brokers, topic, groupID)
 	eventCh, err := kafkaSource.Stream(ctx)
 	if err != nil {
