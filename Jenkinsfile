@@ -30,11 +30,14 @@ pipeline {
         stage('Build Docker Image & Push to Harbor') {
             steps {
                 script {
+                    def GIT_COMMIT_TAG = sh(returnStdout: true, script: 'echo ${GIT_COMMIT}').trim().substring(0, 7)
+                    env.IMAGE_TAG = GIT_COMMIT_TAG
+
                     withCredentials([usernamePassword(credentialsId: HARBOR_CREDS_ID, usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
                         sh """
-                            docker build -t ${HARBOR_URL}/${HARBOR_PROJECT}/${IMAGE_NAME}:latest .
+                            docker build -t ${HARBOR_URL}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG} .
                             echo $HARBOR_PASS | docker login ${HARBOR_URL} -u $HARBOR_USER --password-stdin
-                            docker push ${HARBOR_URL}/${HARBOR_PROJECT}/${IMAGE_NAME}:latest
+                            docker push ${HARBOR_URL}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}
                         """
                     }
                 }
@@ -58,6 +61,7 @@ pipeline {
 
                     withCredentials([file(credentialsId: KUBE_CREDS_ID, variable : 'KUBE_CONFIG_FILE')]){
                         sh "sed -i 's|server: .*|server: https://127.0.0.1:${localport}|' $KUBE_CONFIG_FILE"
+                        sh "sed -i 's|image: ${env.HARBOR_URL}/${env.HARBOR_PROJECT}/${env.IMAGE_NAME}:.*|image: "${env.HARBOR_URL}/${env.HARBOR_PROJECT}/${env.IMAGE_NAME}:${env.IMAGE_TAG}"|' ${DEPLOYMENT_YAML}"
                         echo "Deploying pod with image"
                         sh "KUBECONFIG=${KUBE_CONFIG_FILE} kubectl apply -f ${DEPLOYMENT_YAML}"
                         sh "KUBECONFIG=${KUBE_CONFIG_FILE} kubectl rollout status deployment/rule-engine -n default"
