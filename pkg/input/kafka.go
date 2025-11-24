@@ -26,7 +26,7 @@ func NewKafkaSource(brokers []string, topic, groupID string) *KafkaSource {
 		Brokers: brokers,
 		Topic:   topic,
 		GroupID: groupID,
-		Dialer:  dialer, //타임아웃 방지
+		Dialer:  dialer, //타임아웃 방지1
 	})
 	return &KafkaSource{reader: r}
 }
