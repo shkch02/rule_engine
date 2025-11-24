@@ -43,7 +43,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("룰셋 파일 로드 실패 (%s): %v", defaultRulesetPath, err)
 	}
-	log.Printf("룰셋 로드 완료: %d개 룰", len(ruleset.Rules))
+	log.Printf("룰셋 로드 완료: %d개", len(ruleset.Rules))
 	for _, rule := range ruleset.Rules {
 		log.Printf(" - 룰 ID: %s, 설명: %s", rule.RuleID, rule.Description)
 	}
