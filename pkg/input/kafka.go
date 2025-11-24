@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"rule_engine/pkg/models"
+	"time"
 
 	"github.com/segmentio/kafka-go"
 )
@@ -15,10 +16,17 @@ type KafkaSource struct {
 }
 
 func NewKafkaSource(brokers []string, topic, groupID string) *KafkaSource {
+	dialer := &kafka.Dialer{
+		Timeout:   kafka.DefaultDialer.Timeout,
+		DualStack: true,
+		KeepAlive: 30 * time.Second,
+	}
+
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: brokers,
 		Topic:   topic,
 		GroupID: groupID,
+		Dialer:  dialer,
 	})
 	return &KafkaSource{reader: r}
 }
