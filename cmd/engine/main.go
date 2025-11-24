@@ -44,6 +44,9 @@ func main() {
 		log.Fatalf("룰셋 파일 로드 실패 (%s): %v", defaultRulesetPath, err)
 	}
 	log.Printf("룰셋 로드 완료: %d개 룰", len(ruleset.Rules))
+	for _, rule := range ruleset.Rules {
+		log.Printf(" - 룰 ID: %s, 설명: %s", rule.RuleID, rule.Description)
+	}
 
 	// 2. 룰 엔진 및 Alerter 초기화 (PoC용 PrintAlerter 사용)
 	ruleEngine := engine.NewRuleEngine(ruleset)
