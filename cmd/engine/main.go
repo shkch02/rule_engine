@@ -72,7 +72,7 @@ func main() {
 
 	for event := range eventCh {
 		violations := ruleEngine.Evaluate(event)
-		fmt.Println(event)
+		//fmt.Println(event)
 		if len(violations) > 0 {
 			for _, v := range violations {
 				pocAlerter.Alert(v)
