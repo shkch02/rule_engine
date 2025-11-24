@@ -30,8 +30,8 @@ pipeline {
         stage('Build Docker Image & Push to Harbor') {
             steps {
                 script {
-                    def GIT_COMMIT_TAG = sh(returnStdout: true, script: 'echo ${GIT_COMMIT}').trim().substring(0, 7)
-                    env.IMAGE_TAG = GIT_COMMIT_TAG
+                    env.IMAGE_TAG = sh(returnStdout: true, script: 'git rev-parse --short=8 HEAD').trim()
+                    echo "Using Image Tag: ${env.IMAGE_TAG}"
 
                     withCredentials([usernamePassword(credentialsId: HARBOR_CREDS_ID, usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
                         sh """
