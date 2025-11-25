@@ -43,7 +43,7 @@ func (sa *SlackAlerter) sendSlackNotification(message string) error {
 func (sa *SlackAlerter) Alert(v models.Violation) {
 	eventBytes, _ := json.MarshalIndent(v.Event, "", "  ")
 	msg := fmt.Sprintf(`
-[!!!] 보안 룰 위반 감지
+보안 룰 위반 감지
 룰 ID:     %s
 설명:      %s
 원본 이벤트: %s
