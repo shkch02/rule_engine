@@ -24,6 +24,11 @@
               value: "my-cluster-kafka-bootstrap.kafka.svc:9092"
             - name: KAFKA_TOPIC
               value: "syscall_events"
+            - name: SLACK_WEBHOOK_URL
+              valueFrom:
+                secretKeyRef:
+                  name: slack-webhook-secret
+                  key: webhook_url
           volumeMounts:
           - name: rule-volume
             mountPath: /etc/rules # 룰 엔진 컨테이너 내부에서 YAML 파일을 읽을 경로
