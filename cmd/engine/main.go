@@ -59,7 +59,8 @@ func main() {
 	log.Printf("룰셋: %+v", ruleset)
 	// 2. 룰 엔진 및 Alerter 초기화 (PoC용 PrintAlerter 사용)
 	ruleEngine := engine.NewRuleEngine(ruleset)
-	pocAlerter := alerter.NewPrintAlerter()
+	Alerter := alerter.NewPrintAlerter()
+	SlackAlerter := alerter.NewSlackAlerter(os.Getenv("SLACK_WEBHOOK_URL"))
 
 	// 3. 카프카 소스에서 이벤트 스트림 수신
 	kafkaSource := input.NewKafkaSource(brokers, topic, groupID)
@@ -76,7 +77,8 @@ func main() {
 		//fmt.Println(event)
 		if len(violations) > 0 {
 			for _, v := range violations {
-				pocAlerter.Alert(v)
+				Alerter.Alert(v)
+				SlackAlerter.Alert(v)
 			}
 		}
 	}

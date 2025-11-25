@@ -11,7 +11,8 @@ import (
 // (참고: 실제 리눅스 값은 0, 1, 2가 아닐 수 있으나, 룰 파일의 주석을 따름)
 var flagMap = map[string]int{
 	"O_WRONLY": 1, // 룰 파일 주석 기준
-	"O_RDWR":   2, // 룰 파일 주석 기준
+	"O_RDWR":   2, // 룰 파일 주석 기준 (실제 리눅스 값은 2)
+	//룰따라 추가 필요
 }
 
 type Evaluator struct{}
