@@ -20,7 +20,7 @@ func (pa *PrintAlerter) Alert(v models.Violation) {
 
 	log.Printf(`
 --------------------------------------------------
-보안 룰 위반 감지
+[!!!] 보안 룰 위반 감지 !!!
 룰 ID:     %s
 설명:      %s
 원본 이벤트: %s

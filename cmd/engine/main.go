@@ -71,7 +71,7 @@ func main() {
 
 	log.Println("이벤트 스트리밍 시작....")
 
-	//예상 병목 지점 2
+	//수신한 이벤트에 대해 룰 위반 여부 검사
 	for event := range eventCh {
 		violations := ruleEngine.Evaluate(event)
 		//fmt.Println(event)

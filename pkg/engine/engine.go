@@ -21,9 +21,11 @@ func NewRuleEngine(ruleset *config.RulesetConfig) *RuleEngine {
 
 // Evaluate는 map[key:value ...]구조체인 event를 인자로 받아 단일 이벤트를 모든 룰과 비교하여 위반 목록을 반환합니다.
 func (e *RuleEngine) Evaluate(event models.Event) []models.Violation {
+
+	//Violation : 위반한 룰 정보 담기위한 구조체
 	var violations []models.Violation
 
-	// 1. 이벤트 정규화 (필드 이름 통일)
+	// 이벤트 정규화 (필드 이름 통일) ToDo : 로그와 야믈 달라서 정규화해야함, 로그 변경하면 필요없을듯ㄴ
 	e.normalize(event)
 
 	// 2. 모든 룰에 대해 검사
