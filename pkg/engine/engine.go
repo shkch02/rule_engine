@@ -28,7 +28,7 @@ func (e *RuleEngine) Evaluate(event models.Event) []models.Violation {
 	// 이벤트 정규화 (필드 이름 통일) ToDo : 로그와 야믈 달라서 정규화해야함, 로그 변경하면 필요없을듯ㄴ
 	e.normalize(event)
 
-	// 2. 모든 룰에 대해 검사
+	// 모든 룰에 대해 검사
 	for _, rule := range e.ruleset.Rules {
 		if e.checkRule(event, &rule) {
 			violations = append(violations, models.Violation{
@@ -41,8 +41,10 @@ func (e *RuleEngine) Evaluate(event models.Event) []models.Violation {
 	return violations
 }
 
-// checkRule은 이벤트가 단일 룰의 *모든* 조건(AND)을 만족하는지 검사합니다.
+// checkRule은 이벤트가 단일 룰의 모든 조건(AND)을 만족하는지 검사합니다.
 func (e *RuleEngine) checkRule(event models.Event, rule *config.Rule) bool {
+
+	//모든 컨디션 (시스콜이름,플래그,인자)에 대해 위반조건 만족하는지 검사
 	for _, cond := range rule.Conditions {
 		// Evaluator가 실제 조건 평가를 수행
 		if !e.eval.Check(event, &cond) {
